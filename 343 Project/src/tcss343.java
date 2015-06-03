@@ -312,10 +312,13 @@ public class tcss343 {
 		
 		// iterate (RC)
 		for(int row = 3; row <= n; row++) {
+			int curr = R.get(row - 2).get(row - 1);
+			int prevSolutionPlusCurr = result.get(row - 2) + curr;
+			
 			int lastColMin = INFINITY;
 			int selected = INFINITY;
 			for(int k = 0; k < row - 2; k++) {
-				int thisColValue = R.get(0).get(k) + R.get(k).get(row - 1);
+				int thisColValue = result.get(k) + R.get(k).get(row - 1);
 				lastColMin = min(thisColValue, lastColMin);
 				
 				if(lastColMin == thisColValue) {
@@ -323,8 +326,6 @@ public class tcss343 {
 				}
 			}
 			
-			int curr = R.get(row - 2).get(row - 1);
-			int prevSolutionPlusCurr = result.get(row - 2) + curr;
 			int min = min(prevSolutionPlusCurr, lastColMin);
 			result.add(min);
 			
