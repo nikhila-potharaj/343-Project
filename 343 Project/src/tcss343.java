@@ -93,7 +93,6 @@ public class tcss343 {
 		PrintStream output = new PrintStream(new File(fileName));
 		
 		for(int i = 0; i < n; i++) {
-			System.out.println();
 			for(int j = 0; j < n; j++) {
 				if(i > j) {
 					output.print("NA\t");
@@ -108,7 +107,6 @@ public class tcss343 {
 				}
 			}
 			output.println();
-			System.out.println();
 		}
 		
 		output.close();
