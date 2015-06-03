@@ -27,8 +27,8 @@ public class tcss343 {
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		// get R[][] from the input file
-		generateCostTable(4, "input.txt");
-		Scanner input = new Scanner(new File("input.txt"));
+		//generateCostTable(4, "input.txt");
+		Scanner input = new Scanner(new File(args[0]));
 		List<List<Integer>> R = getR(input);
 		input.close();
 		
@@ -109,7 +109,7 @@ public class tcss343 {
 		PrintStream output = new PrintStream(new File(fileName));
 		
 		for(int i = 0; i < n; i++) {
-			System.out.println("");
+			System.out.println();
 			for(int j = 0; j < n; j++) {
 				if(i > j) {
 					System.out.print("NA" + " ");
@@ -127,8 +127,9 @@ public class tcss343 {
 				}
 			}
 			output.println();
+			System.out.println();
 		}
-		System.out.println("\n");
+		
 		output.close();
 	}
 	
@@ -351,7 +352,7 @@ public class tcss343 {
 		int lastElem = sequence.size() - 1;
 		backwardsOrder.push(lastElem);
 		
-		while(lastElem != 0) {
+		while(lastElem > 0) {
 			lastElem = sequence.get(lastElem);
 			backwardsOrder.push(lastElem);
 		}
