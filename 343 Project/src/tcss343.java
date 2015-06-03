@@ -26,20 +26,19 @@ public class tcss343 {
 	public static int bruteForceMinCost = INFINITY;
 	
 	public static void main(String[] args) throws FileNotFoundException {
+		String fileName = args[0];
+		//String fileName = "input.txt";
 
 		//generateAllCostTables();
 		
 		// Get the cost table from the input file
-		Scanner input = new Scanner(new File(args[0]));
+		Scanner input = new Scanner(new File(fileName));
 		List<List<Integer>> R = getR(input);
 		input.close();
 		
 		runBruteForce(R);
 		runDivideAndConquer(R);
 		runDynamic(R);
-		
-		//System.out.println(dynamicProgrammingMin(R));
-		
 	}
 	
 	
@@ -367,25 +366,42 @@ public class tcss343 {
 	}
 	
 	
-	private static void runBruteForce(List<List<Integer>> costTable) {
+	private static void runBruteForce(List<List<Integer>> theCostTable) {
+		System.out.println("-----------------\nBrute Force\n");
+		
 		//Run the algorithm
 		bruteForcePath = new ArrayList<ArrayList<Integer>>();
-		bruteForceMin(costTable);
+		bruteForceMin(theCostTable);
 		
 		//Display the results.
-		System.out.println("Min: " + bruteForceMinCost);
+		System.out.print("Path:\n[0");
 		for(ArrayList<Integer> coordinate : bruteForcePath) {
-			System.out.println(coordinate.get(0) + " to " + coordinate.get(1));
+			System.out.print(", " + coordinate.get(1));
 		}
+		System.out.println("]");
+		
+		System.out.println("\nMinimum Cost: " + bruteForceMinCost);
 	}
 	
 	
-	private static void runDivideAndConquer(List<List<Integer>> costTable) {
+	private static void runDivideAndConquer(List<List<Integer>> theCostTable) {
+		System.out.println("-----------------\nDivide & Conquer\n");
 		
+		//Run the algorithm and display the results.
+		System.out.println("Path:");
+		int divideMin = divideRecursion(theCostTable);
+		
+		System.out.println("\nMinimum Cost: " + divideMin);
 	}
 	
-	private static void runDynamic(List<List<Integer>> costTable) {
+	private static void runDynamic(List<List<Integer>> theCostTable) {
+		System.out.println("-----------------\nDynamic Programming\n");
 		
+		//Run the algorithm and display the results.
+		System.out.println("Path:");
+		int dynamicMin = dynamicProgrammingMin(theCostTable);
+		
+		System.out.println("\nMinimum Cost: " + dynamicMin);
 	}
 	
 	
