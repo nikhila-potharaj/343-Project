@@ -1,0 +1,4 @@
+0	3	8	8	
+NA	0	8	8	
+NA	NA	0	9	
+NA	NA	NA	0	
