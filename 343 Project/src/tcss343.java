@@ -26,37 +26,22 @@ public class tcss343 {
 	public static int bruteForceMinCost = INFINITY;
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		// get R[][] from the input file
-		generateCostTable(4, "input.txt");
-		Scanner input = new Scanner(new File("input.txt"));
+
+		//generateAllCostTables();
+		
+		// Get the cost table from the input file
+		Scanner input = new Scanner(new File(args[0]));
 		List<List<Integer>> R = getR(input);
 		input.close();
 		
-		bruteForcePath = new ArrayList<ArrayList<Integer>>();
-		bruteForceMin(R);
-		
-		//Display the solution (Testing Purposes Only)
-		System.out.println("Min: " + bruteForceMinCost);
-		for(ArrayList<Integer> coordinate : bruteForcePath) {
-			System.out.println(coordinate.get(0) + " to " + coordinate.get(1));
-		}
+		runBruteForce(R);
+		runDivideAndConquer(R);
+		runDynamic(R);
 		
 		//System.out.println(dynamicProgrammingMin(R));
 		
-		
-		
-//		generateCostTable(100, OUTPUT_FILE1);
-//		generateCostTable(200, OUTPUT_FILE2);
-//		generateCostTable(400, OUTPUT_FILE3);
-//		generateCostTable(600, OUTPUT_FILE4);
-//		generateCostTable(800, OUTPUT_FILE5);
 	}
 	
-	
-	public static int min(int x, int y) {
-		if(x < y) return x;
-		return y;
-	}
 	
 	
 	
@@ -357,6 +342,50 @@ public class tcss343 {
 		}
 		
 		return result;
+	}
+	
+	
+	
+	
+	
+	/*================*
+	 * Helper Methods *
+	 *================*/
+	
+	public static int min(int x, int y) {
+		if(x < y) return x;
+		return y;
+	}
+	
+	
+	private static void generateAllCostTables() throws FileNotFoundException {
+		generateCostTable(100, OUTPUT_FILE1);
+		generateCostTable(200, OUTPUT_FILE2);
+		generateCostTable(400, OUTPUT_FILE3);
+		generateCostTable(600, OUTPUT_FILE4);
+		generateCostTable(800, OUTPUT_FILE5);
+	}
+	
+	
+	private static void runBruteForce(List<List<Integer>> costTable) {
+		//Run the algorithm
+		bruteForcePath = new ArrayList<ArrayList<Integer>>();
+		bruteForceMin(costTable);
+		
+		//Display the results.
+		System.out.println("Min: " + bruteForceMinCost);
+		for(ArrayList<Integer> coordinate : bruteForcePath) {
+			System.out.println(coordinate.get(0) + " to " + coordinate.get(1));
+		}
+	}
+	
+	
+	private static void runDivideAndConquer(List<List<Integer>> costTable) {
+		
+	}
+	
+	private static void runDynamic(List<List<Integer>> costTable) {
+		
 	}
 	
 	
