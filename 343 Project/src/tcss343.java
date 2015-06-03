@@ -82,7 +82,8 @@ public class tcss343 {
 	
 
 	/**
-	 * Creates an n x n matrix of costs.
+	 * Creates an n x n matrix of random costs between 1 inclusive and
+	 * MAX_COST inclusive.
 	 * @param n The dimension of the square matrix.
 	 * @param fileName The name of the File to write to
 	 * @throws FileNotFoundException
