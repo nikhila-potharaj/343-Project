@@ -112,17 +112,14 @@ public class tcss343 {
 			System.out.println("");
 			for(int j = 0; j < n; j++) {
 				if(i > j) {
-					System.out.print("NA" + " ");
 					output.print("NA\t");
 				}
 				else if(i == j) {
-					System.out.print("0" + "  ");
 					output.print(0 + "\t");
 				}
 				else {
 					// randCost between 1 inclusive and MAX_COST inclusive
 					int randCost = (new Random().nextInt(MAX_COST)) + 1; 
-					System.out.print(randCost + "  ");
 					output.print(randCost + "\t");
 				}
 			}
@@ -361,5 +358,6 @@ public class tcss343 {
 		
 		return result;
 	}
+	
 	
 }
