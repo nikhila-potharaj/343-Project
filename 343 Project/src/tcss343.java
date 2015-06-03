@@ -26,37 +26,21 @@ public class tcss343 {
 	public static int bruteForceMinCost = INFINITY;
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		// get R[][] from the input file
-		//generateCostTable(4, "input.txt");
-		Scanner input = new Scanner(new File(args[0]));
+		String fileName = args[0];
+		//String fileName = "input.txt";
+
+		//generateAllCostTables();
+		
+		// Get the cost table from the input file
+		Scanner input = new Scanner(new File(fileName));
 		List<List<Integer>> R = getR(input);
 		input.close();
 		
-		bruteForcePath = new ArrayList<ArrayList<Integer>>();
-		bruteForceMin(R);
-		
-		//Display the solution (Testing Purposes Only)
-		System.out.println("Min: " + bruteForceMinCost);
-		for(ArrayList<Integer> coordinate : bruteForcePath) {
-			System.out.println(coordinate.get(0) + " to " + coordinate.get(1));
-		}
-		
-		//System.out.println(dynamicProgrammingMin(R));
-		
-		
-		
-//		generateCostTable(100, OUTPUT_FILE1);
-//		generateCostTable(200, OUTPUT_FILE2);
-//		generateCostTable(400, OUTPUT_FILE3);
-//		generateCostTable(600, OUTPUT_FILE4);
-//		generateCostTable(800, OUTPUT_FILE5);
+		runBruteForce(R);
+		runDivideAndConquer(R);
+		runDynamic(R);
 	}
 	
-	
-	public static int min(int x, int y) {
-		if(x < y) return x;
-		return y;
-	}
 	
 	
 	
@@ -98,7 +82,8 @@ public class tcss343 {
 	
 
 	/**
-	 * Creates an n x n matrix of costs.
+	 * Creates an n x n matrix of random costs between 1 inclusive and
+	 * MAX_COST inclusive.
 	 * @param n The dimension of the square matrix.
 	 * @param fileName The name of the File to write to
 	 * @throws FileNotFoundException
@@ -109,25 +94,20 @@ public class tcss343 {
 		PrintStream output = new PrintStream(new File(fileName));
 		
 		for(int i = 0; i < n; i++) {
-			System.out.println();
 			for(int j = 0; j < n; j++) {
 				if(i > j) {
-					System.out.print("NA" + " ");
 					output.print("NA\t");
 				}
 				else if(i == j) {
-					System.out.print("0" + "  ");
 					output.print(0 + "\t");
 				}
 				else {
 					// randCost between 1 inclusive and MAX_COST inclusive
 					int randCost = (new Random().nextInt(MAX_COST)) + 1; 
-					System.out.print(randCost + "  ");
 					output.print(randCost + "\t");
 				}
 			}
 			output.println();
-			System.out.println();
 		}
 		
 		output.close();
@@ -253,7 +233,7 @@ public class tcss343 {
 			int selected = Integer.MAX_VALUE;
 			for(int i = 0; i < n - 1; i++) {
 				int prev = R.get(0).get(i) + R.get(i).get(n - 1);
-				min = min(prev, min);
+				min = Math.min(prev, min);
 				if(prev == min) {
 					selected = i;				
 				}
@@ -299,39 +279,39 @@ public class tcss343 {
 		// declare
 		List<Integer> result = new ArrayList<Integer>();
 		List<Integer> sequence = new ArrayList<Integer>();
-		int n = R.size();
+		int matrixSize = R.size() - 1;		
 		
 		// initialize (BC)
-		if(n >= 1) {
+		if(matrixSize >= 0) {
 			result.add(0);
 			sequence.add(0);
 		}
-		if(n >= 2) {
+		if(matrixSize >= 1) {
 			result.add(R.get(0).get(1));
 			sequence.add(1);
 		}
 		
 		// iterate (RC)
-		for(int row = 3; row <= n; row++) {
-			int curr = R.get(row - 2).get(row - 1);
-			int prevSolutionPlusCurr = result.get(row - 2) + curr;
+		for(int row = 2; row <= matrixSize; row++) {
+			int curr = R.get(row - 1).get(row);
+			int prevSolutionPlusCurr = result.get(row - 1) + curr;
 			
 			int lastColMin = INFINITY;
 			int selected = INFINITY;
-			for(int k = 0; k < row - 2; k++) {
-				int thisColValue = result.get(k) + R.get(k).get(row - 1);
-				lastColMin = min(thisColValue, lastColMin);
+			for(int k = 0; k < row - 1; k++) {
+				int thisColValue = result.get(k) + R.get(k).get(row);
+				lastColMin = Math.min(thisColValue, lastColMin);
 				
 				if(lastColMin == thisColValue) {
 					selected = k;
 				}
 			}
 			
-			int min = min(prevSolutionPlusCurr, lastColMin);
+			int min = Math.min(prevSolutionPlusCurr, lastColMin);
 			result.add(min);
 			
-			if(result.get(row - 1) == prevSolutionPlusCurr) {
-				sequence.add(row - 2);
+			if(result.get(row) == prevSolutionPlusCurr) {
+				sequence.add(row - 1);
 			}
 			else {
 				sequence.add(selected);
@@ -339,7 +319,7 @@ public class tcss343 {
 		}
 		
 		System.out.println(dynamicProgrammingRecover(sequence));
-		return result.get(n - 1);
+		return result.get(matrixSize);
 	}
 	
 	/**
@@ -363,5 +343,62 @@ public class tcss343 {
 		
 		return result;
 	}
+	
+	
+	
+	
+	
+	/*================*
+	 * Helper Methods *
+	 *================*/
+	
+	
+	private static void generateAllCostTables() throws FileNotFoundException {
+		generateCostTable(100, OUTPUT_FILE1);
+		generateCostTable(200, OUTPUT_FILE2);
+		generateCostTable(400, OUTPUT_FILE3);
+		generateCostTable(600, OUTPUT_FILE4);
+		generateCostTable(800, OUTPUT_FILE5);
+	}
+	
+	
+	private static void runBruteForce(List<List<Integer>> theCostTable) {
+		System.out.println("-----------------\nBrute Force\n");
+		
+		//Run the algorithm
+		bruteForcePath = new ArrayList<ArrayList<Integer>>();
+		bruteForceMin(theCostTable);
+		
+		//Display the results.
+		System.out.print("Path:\n[0");
+		for(ArrayList<Integer> coordinate : bruteForcePath) {
+			System.out.print(", " + coordinate.get(1));
+		}
+		System.out.println("]");
+		
+		System.out.println("\nMinimum Cost: " + bruteForceMinCost);
+	}
+	
+	
+	private static void runDivideAndConquer(List<List<Integer>> theCostTable) {
+		System.out.println("-----------------\nDivide & Conquer\n");
+		
+		//Run the algorithm and display the results.
+		System.out.println("Path:");
+		int divideMin = divideRecursion(theCostTable);
+		
+		System.out.println("\nMinimum Cost: " + divideMin);
+	}
+	
+	private static void runDynamic(List<List<Integer>> theCostTable) {
+		System.out.println("-----------------\nDynamic Programming\n");
+		
+		//Run the algorithm and display the results.
+		System.out.println("Path:");
+		int dynamicMin = dynamicProgrammingMin(theCostTable);
+		
+		System.out.println("\nMinimum Cost: " + dynamicMin);
+	}
+	
 	
 }
