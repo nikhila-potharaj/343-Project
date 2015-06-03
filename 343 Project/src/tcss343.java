@@ -206,23 +206,35 @@ public class tcss343 {
 	 *====================*/
 	
 	/**
+	 * 
+	 * Takes in a matrix R[0...n-1][0...n-1] and outputs a sequence for the minimum
+	 * price to reach from port 0 to port n - 1 using the recursion for the divide
+	 * and conquer method. 
 	 * @author Nikhila Potharaj
+	 * 
 	 */
-	public static int divideRecursion(List<List<Integer>> R) {
+	public static int divideAndConquer(List<List<Integer>> R) {
 		List<Integer> seq = new ArrayList<Integer>();
 		seq.add(0);
 		seq.add(1);
 		if(R.size() != 0) {
-			return divideRecursion(R, R.size(), seq);
+			return divideAndConquerRecursion(R, R.size(), seq);
 		} else {
 			return -1;
 		}
 	}
 	
 	/**
+	 * Helper method for the main divide and conquer. This method takes in the matrix
+	 * R[0...n-1][0...n-1], n the size of the matrix that needs to be recursed, and 
+	 * a sequence array that stores the sequence for the minimum price. 
+	 * 
+	 * This method outputs the minimum price for each size of the matrix from n = 1 ... n -1.
+	 * 
+	 * This method also prints out the sequence by calling the DivideAndConquerRecovery().
 	 * @author Nikhila Potharaj
 	 */
-	private static int divideRecursion(List<List<Integer>> R, 
+	private static int divideAndConquerRecursion(List<List<Integer>> R, 
 			int n, List<Integer> seq) {
 		if(n == 1) {
 			return 0;
@@ -231,37 +243,38 @@ public class tcss343 {
 		} else {
 			int min = Integer.MAX_VALUE;
 			int selected = Integer.MAX_VALUE;
-			for(int i = 0; i < n - 1; i++) {
-				int prev = R.get(0).get(i) + R.get(i).get(n - 1);
-				min = Math.min(prev, min);
+			int prev = Integer.MAX_VALUE;
+			for(int i = 1; i <= n - 1; i++) {
+				prev = divideAndConquerRecursion(R, i, seq) + R.get(i - 1).get(n - 1);
+
+				min = min(prev, min);
 				if(prev == min) {
-					selected = i;				
+					selected = i - 1;
 				}
 			}
-			int prev = divideRecursion(R, n - 1, seq);
-			int sum = prev + R.get(n - 2).get(n - 1);
-			if(prev == sum) {
+			if(prev == min && (seq.size() < n)) {
 				seq.add(n - 2);
-			} else {
+			} else if(prev != min && (seq.size() < n)) {
 				seq.add(selected);
 			}
-			divideAndConquerRecover(seq, n - 2);
-			return Math.min(min, sum);
+			divideAndConquerRecover(seq, n - 1, R.size());
+			return min;
 		}
 	}
 	
 	/**
+	 * This method calls takes in an array that stores the sequence for the minimum price,
+	 * the current size the array is at as n, and the original size of the matrix R. 
+	 * 
+	 * It calls the dynamicProgrammingRecover() method to reduce redundancy. 
 	 * @author Nikhila Potharaj
 	 */
-	public static void divideAndConquerRecover(List<Integer> sequence, int n) {
-		if(n == 2) {
+	public static void divideAndConquerRecover(List<Integer> sequence, int n, int size) {
+		if(n == size - 1) {
 			System.out.println(dynamicProgrammingRecover(sequence));
 		}
 	}
-	
-	
-	
-	
+
 	
 	/*=====================*
 	 * Dynamic Programming *
@@ -391,7 +404,7 @@ public class tcss343 {
 		
 		//Run the algorithm and display the results.
 		System.out.println("Path:");
-		int divideMin = divideRecursion(theCostTable);
+		int divideMin = divideAndConquer(theCostTable);
 		
 		long endTime = System.currentTimeMillis();
 		
