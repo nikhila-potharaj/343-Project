@@ -370,9 +370,13 @@ public class tcss343 {
 	private static void runBruteForce(List<List<Integer>> theCostTable) {
 		System.out.println("-----------------\nBrute Force\n");
 		
+		long startTime = System.currentTimeMillis();
+		
 		//Run the algorithm
 		bruteForcePath = new ArrayList<ArrayList<Integer>>();
 		bruteForceMin(theCostTable);
+		
+		long endTime = System.currentTimeMillis();
 		
 		//Display the results.
 		System.out.print("Path:\n[0");
@@ -382,27 +386,38 @@ public class tcss343 {
 		System.out.println("]");
 		
 		System.out.println("\nMinimum Cost: " + bruteForceMinCost);
+		System.out.println("Running Time: " + (endTime - startTime));
 	}
 	
 	
 	private static void runDivideAndConquer(List<List<Integer>> theCostTable) {
 		System.out.println("-----------------\nDivide & Conquer\n");
 		
+		long startTime = System.currentTimeMillis();
+		
 		//Run the algorithm and display the results.
 		System.out.println("Path:");
 		int divideMin = divideRecursion(theCostTable);
 		
+		long endTime = System.currentTimeMillis();
+		
 		System.out.println("\nMinimum Cost: " + divideMin);
+		System.out.println("Running Time: " + (endTime - startTime));
 	}
 	
 	private static void runDynamic(List<List<Integer>> theCostTable) {
 		System.out.println("-----------------\nDynamic Programming\n");
 		
+		long startTime = System.currentTimeMillis();
+		
 		//Run the algorithm and display the results.
 		System.out.println("Path:");
 		int dynamicMin = dynamicProgrammingMin(theCostTable);
 		
+		long endTime = System.currentTimeMillis();
+		
 		System.out.println("\nMinimum Cost: " + dynamicMin);
+		System.out.println("Running Time: " + (endTime - startTime));
 	}
 	
 	
