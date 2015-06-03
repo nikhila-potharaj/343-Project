@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Stack;
 
 public class tcss343 {
 	public static final String OUTPUT_FILE1 = "100x100.txt";
@@ -51,6 +52,18 @@ public class tcss343 {
 //		generateCostTable(800, OUTPUT_FILE5);
 	}
 	
+	
+	public static int min(int x, int y) {
+		if(x < y) return x;
+		return y;
+	}
+	
+	
+	
+	/*==========================*
+	 * Cost Table Gen & Loading *
+	 *==========================*/
+	
 	/**
 	 * Get R[][] by parsing the input file.
 	 * @param input A Scanner of the input file.
@@ -83,11 +96,41 @@ public class tcss343 {
 		return R;
 	}
 	
-	public static int min(int x, int y) {
-		if(x < y) return x;
-		return y;
+
+	/**
+	 * Creates an n x n matrix of costs.
+	 * @param n The dimension of the square matrix.
+	 * @param fileName The name of the File to write to
+	 * @throws FileNotFoundException
+	 * @author Wing-Sea Poon
+	 */
+	public static void generateCostTable(int n, String fileName) 
+	throws FileNotFoundException {
+		PrintStream output = new PrintStream(new File(fileName));
+		
+		for(int i = 0; i < n; i++) {
+			System.out.println("");
+			for(int j = 0; j < n; j++) {
+				if(i > j) {
+					System.out.print("NA" + " ");
+					output.print("NA\t");
+				}
+				else if(i == j) {
+					System.out.print("0" + "  ");
+					output.print(0 + "\t");
+				}
+				else {
+					// randCost between 1 inclusive and MAX_COST inclusive
+					int randCost = (new Random().nextInt(MAX_COST)) + 1; 
+					System.out.print(randCost + "  ");
+					output.print(randCost + "\t");
+				}
+			}
+			output.println();
+		}
+		System.out.println("\n");
+		output.close();
 	}
-	
 	
 	
 	
@@ -175,6 +218,8 @@ public class tcss343 {
 	
 	
 	
+	
+	
 	/*====================*
 	 * Divide and Conquer *
 	 *====================*/
@@ -182,16 +227,65 @@ public class tcss343 {
 	/**
 	 * @author Nikhila Potharaj
 	 */
-	public static int recursiveMin(List<List<Integer>> R) {
-		return -1;
+	public static int divideRecursion(List<List<Integer>> R) {
+		List<Integer> seq = new ArrayList<Integer>();
+		seq.add(0);
+		seq.add(1);
+		if(R.size() != 0) {
+			return divideRecursion(R, R.size(), seq);
+		} else {
+			return -1;
+		}
 	}
 	
 	/**
 	 * @author Nikhila Potharaj
 	 */
-	public static List<Integer> recursiveRecover(List<List<Integer>> R) {
-		return null;
+	private static int divideRecursion(List<List<Integer>> R, 
+			int n, List<Integer> seq) {
+		if(n == 1) {
+			return 0;
+		} else if(n == 2) {
+			return R.get(0).get(1);
+		} else {
+			int min = Integer.MAX_VALUE;
+			int selected = Integer.MAX_VALUE;
+			for(int i = 0; i < n - 1; i++) {
+				int prev = R.get(0).get(i) + R.get(i).get(n - 1);
+				min = min(prev, min);
+				if(prev == min) {
+					selected = i;				
+				}
+			}
+			int prev = divideRecursion(R, n - 1, seq);
+			int sum = prev + R.get(n - 2).get(n - 1);
+			if(prev == sum) {
+				seq.add(n - 2);
+			} else {
+				seq.add(selected);
+			}
+			divideAndConquerRecover(seq, n - 2);
+			return Math.min(min, sum);
+		}
 	}
+	
+	/**
+	 * @author Nikhila Potharaj
+	 */
+	public static void divideAndConquerRecover(List<Integer> sequence, int n) {
+		if(n == 2) {
+			System.out.println(dynamicProgrammingRecover(sequence));
+		}
+	}
+	
+	
+	
+	
+	
+	/*=====================*
+	 * Dynamic Programming *
+	 *=====================*/
+	
 	
 	/**
 	 * @author Wing-Sea Poon
@@ -203,72 +297,69 @@ public class tcss343 {
 		
 		// declare
 		List<Integer> result = new ArrayList<Integer>();
+		List<Integer> sequence = new ArrayList<Integer>();
 		int n = R.size();
 		
 		// initialize (BC)
 		if(n >= 1) {
 			result.add(0);
+			sequence.add(0);
 		}
 		if(n >= 2) {
 			result.add(R.get(0).get(1));
+			sequence.add(1);
 		}
 		
 		// iterate (RC)
 		for(int row = 3; row <= n; row++) {
 			int lastColMin = INFINITY;
+			int selected = INFINITY;
 			for(int k = 0; k < row - 2; k++) {
 				int thisColValue = R.get(0).get(k) + R.get(k).get(row - 1);
 				lastColMin = min(thisColValue, lastColMin);
+				
+				if(lastColMin == thisColValue) {
+					selected = k;
+				}
 			}
 			
 			int curr = R.get(row - 2).get(row - 1);
 			int prevSolutionPlusCurr = result.get(row - 2) + curr;
 			int min = min(prevSolutionPlusCurr, lastColMin);
 			result.add(min);
+			
+			if(result.get(row - 1) == prevSolutionPlusCurr) {
+				sequence.add(row - 2);
+			}
+			else {
+				sequence.add(selected);
+			}
 		}
 		
+		System.out.println(dynamicProgrammingRecover(sequence));
 		return result.get(n - 1);
 	}
 	
 	/**
+	 * Returns the 0-based sequence of posts to select.
 	 * @author Wing-Sea Poon
 	 */
-	public static List<Integer> dynamicProgrammingRecover(List<List<Integer>> R) {
-		return null;
+	public static List<Integer> dynamicProgrammingRecover(List<Integer> sequence) {
+		List<Integer> result = new ArrayList<Integer>();
+		Stack<Integer> backwardsOrder = new Stack<Integer>();
+		int lastElem = sequence.size() - 1;
+		backwardsOrder.push(lastElem);
+		
+		while(lastElem != 0) {
+			lastElem = sequence.get(lastElem);
+			backwardsOrder.push(lastElem);
+		}
+		
+		while(!backwardsOrder.isEmpty()) {
+			result.add(backwardsOrder.pop());
+		}
+		
+		return result;
 	}
 	
-	/**
-	 * Creates an n x n matrix of costs.
-	 * @param n The dimension of the square matrix.
-	 * @param fileName The name of the File to write to
-	 * @throws FileNotFoundException
-	 * @author Wing-Sea Poon
-	 */
-	public static void generateCostTable(int n, String fileName) 
-	throws FileNotFoundException {
-		PrintStream output = new PrintStream(new File(fileName));
-		
-		for(int i = 0; i < n; i++) {
-			System.out.println("");
-			for(int j = 0; j < n; j++) {
-				if(i > j) {
-					System.out.print("NA" + " ");
-					output.print("NA\t");
-				}
-				else if(i == j) {
-					System.out.print("0" + "  ");
-					output.print(0 + "\t");
-				}
-				else {
-					// randCost between 1 inclusive and MAX_COST inclusive
-					int randCost = (new Random().nextInt(MAX_COST)) + 1; 
-					System.out.print(randCost + "  ");
-					output.print(randCost + "\t");
-				}
-			}
-			output.println();
-		}
-		System.out.println("\n");
-		output.close();
-	}
 }
