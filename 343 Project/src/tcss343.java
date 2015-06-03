@@ -93,7 +93,7 @@ public class tcss343 {
 		PrintStream output = new PrintStream(new File(fileName));
 		
 		for(int i = 0; i < n; i++) {
-			System.out.println("");
+			System.out.println();
 			for(int j = 0; j < n; j++) {
 				if(i > j) {
 					output.print("NA\t");
@@ -108,8 +108,9 @@ public class tcss343 {
 				}
 			}
 			output.println();
+			System.out.println();
 		}
-		System.out.println("\n");
+		
 		output.close();
 	}
 	
@@ -332,7 +333,7 @@ public class tcss343 {
 		int lastElem = sequence.size() - 1;
 		backwardsOrder.push(lastElem);
 		
-		while(lastElem != 0) {
+		while(lastElem > 0) {
 			lastElem = sequence.get(lastElem);
 			backwardsOrder.push(lastElem);
 		}
